@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMC 8 Quest</title>
+<meta name="description" content="Daily AMC 8 practice quest — solve a problem, earn XP, grow your pet.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>&#129514;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night: #131530;
+    --night-deep: #0d0e22;
+    --card: #1f2148;
+    --card-2: #272a58;
+    --line: #3a3d75;
+    --text: #eef0ff;
+    --text-dim: #aab0e0;
+    --gold: #ffd21f;
+    --gold-ink: #1d1a05;
+    --mint: #3ddc97;
+    --mint-ink: #0b2519;
+    --coral: #ff5f7a;
+    --coral-ink: #2b0a12;
+    --sky: #53c8ff;
+    --sky-ink: #06202e;
+    --violet: #b28bff;
+    --kid: var(--sky);
+    --kid-ink: var(--sky-ink);
+    --radius: 22px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    background: var(--night);
+    color: var(--text);
+    font-family: "Nunito", "Segoe UI", sans-serif;
+    font-size: 16.5px;
+    line-height: 1.5;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(circle at 18% 12%, rgba(83,200,255,0.09), transparent 32%),
+      radial-gradient(circle at 85% 70%, rgba(178,139,255,0.09), transparent 36%),
+      radial-gradient(rgba(255,255,255,0.16) 1px, transparent 1px),
+      radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 190px 190px, 90px 90px;
+    background-position: 0 0, 0 0, 12px 8px, 45px 60px;
+  }
+
+  h1, h2, h3, .display { font-family: "Fredoka", "Nunito", sans-serif; }
+
+  .wrap { max-width: 980px; margin: 0 auto; padding: 1.4rem 1rem 4rem; }
+
+  .screen { display: none; animation: fadein .35s ease; }
+  .screen.active { display: block; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  /* ------- chunky buttons ------- */
+  .btn {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    border: none;
+    border-radius: 16px;
+    padding: 0.7rem 1.4rem;
+    cursor: pointer;
+    color: var(--text);
+    background: var(--card-2);
+    box-shadow: 0 5px 0 #14163a;
+    transition: transform .08s ease, box-shadow .08s ease, filter .15s ease;
+    user-select: none;
+  }
+  .btn:hover { filter: brightness(1.1); }
+  .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #14163a; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; filter: none; }
+  .btn.gold { background: var(--gold); color: var(--gold-ink); box-shadow: 0 5px 0 #a88500; }
+  .btn.gold:active { box-shadow: 0 1px 0 #a88500; }
+  .btn.mint { background: var(--mint); color: var(--mint-ink); box-shadow: 0 5px 0 #1d8f5d; }
+  .btn.mint:active { box-shadow: 0 1px 0 #1d8f5d; }
+  .btn.coral { background: var(--coral); color: var(--coral-ink); box-shadow: 0 5px 0 #b03248; }
+  .btn.coral:active { box-shadow: 0 1px 0 #b03248; }
+  .btn.ghost { background: transparent; box-shadow: none; color: var(--text-dim); text-decoration: underline; font-size: .92rem; }
+  .btn.big { font-size: 1.35rem; padding: 1rem 2.4rem; border-radius: 20px; }
+
+  .card {
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.2rem 1.3rem;
+  }
+
+  /* ================= KID SELECT ================= */
+  #screen-select { text-align: center; padding-top: 4vh; }
+  .logo {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.6rem, 9vw, 4.6rem);
+    line-height: 1.05;
+    letter-spacing: 0.01em;
+    background: linear-gradient(100deg, var(--sky), var(--violet) 55%, var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 3px 0 rgba(0,0,0,0.35));
+  }
+  .tagline { color: var(--text-dim); margin-top: .4rem; font-size: 1.05rem; }
+  .kid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: .8rem; max-width: 720px; margin: 2rem auto 0; }
+  .kid-card {
+    font: inherit; color: inherit; text-align: center;
+    background: var(--card);
+    border: 3px solid var(--kc, var(--sky));
+    border-radius: 20px;
+    padding: .9rem .5rem .8rem;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.35);
+  }
+  .kid-card:hover { transform: translateY(-4px) rotate(-1deg); box-shadow: 0 9px 0 rgba(0,0,0,0.35); }
+  .kid-card .pet { height: 54px; display: flex; align-items: center; justify-content: center; }
+  .kid-card .kname { font-family: "Fredoka", sans-serif; font-size: 1.35rem; font-weight: 600; margin-top: .3rem; color: var(--kc, var(--sky)); line-height: 1.15; }
+  .kid-card .klvl { color: var(--text-dim); font-weight: 700; font-size: .8rem; margin-top: .15rem; }
+  .parent-row { margin-top: 2.2rem; }
+
+  .syncchip {
+    display: inline-flex; align-items: center; gap: .4rem;
+    margin-top: 1.2rem;
+    font-size: .78rem; font-weight: 800; color: var(--text-dim);
+    background: var(--card); border: 2px solid var(--line);
+    border-radius: 999px; padding: .2rem .8rem;
+  }
+  .syncchip.err { color: var(--gold); border-color: var(--gold); }
+
+  /* ================= DASHBOARD ================= */
+  .dash-head {
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    background: linear-gradient(135deg, var(--card), var(--card-2));
+    border: 2px solid var(--kid);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.3rem;
+  }
+  .pet-bubble {
+    font-size: 3.4rem; line-height: 1;
+    background: var(--night-deep);
+    border: 2px solid var(--line);
+    border-radius: 50%;
+    width: 96px; height: 96px;
+    display: flex; align-items: center; justify-content: center;
+    flex: none;
+    animation: bob 3.2s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  .dash-id { flex: 1 1 200px; min-width: 190px; }
+  .dash-id h1 { font-size: 2rem; font-weight: 600; color: var(--kid); line-height: 1.1; }
+  .lvl-line { font-weight: 800; color: var(--text); margin-top: .15rem; }
+  .lvl-line .ltitle { color: var(--gold); }
+  .petstage { color: var(--text-dim); font-size: .9rem; font-weight: 700; }
+  .xpbar { margin-top: .55rem; height: 20px; background: var(--night-deep); border-radius: 999px; border: 2px solid var(--line); overflow: hidden; position: relative; }
+  .xpbar > .fill {
+    height: 100%; border-radius: 999px;
+    background: linear-gradient(90deg, #f7b733, var(--gold));
+    position: relative; transition: width .8s cubic-bezier(.22,1,.36,1);
+  }
+  .xpbar > .fill::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.55) 50%, transparent 70%);
+    animation: shine 2.6s linear infinite;
+  }
+  @keyframes shine { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+  .xptext { font-size: .85rem; font-weight: 800; color: var(--text-dim); margin-top: .25rem; }
+  .switch-kid { margin-left: auto; align-self: flex-start; }
+
+  .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .9rem; margin-top: 1.1rem; }
+  .stat {
+    background: var(--card); border: 2px solid var(--line); border-radius: 18px;
+    padding: .85rem .9rem; text-align: center;
+  }
+  .stat .v { font-family: "Fredoka", sans-serif; font-size: 1.7rem; font-weight: 600; color: var(--text); line-height: 1.15; }
+  .stat .v small { font-size: 1rem; color: var(--text-dim); }
+  .stat .k { font-size: .8rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); margin-top: .15rem; }
+
+  /* mission zone */
+  .mission { margin-top: 1.3rem; border: 2px solid var(--gold); background: linear-gradient(160deg, var(--card), #2b2430); }
+  .mission h2 { color: var(--gold); font-size: 1.45rem; font-weight: 600; }
+  .mission .sub { color: var(--text-dim); font-weight: 700; margin-top: .1rem; font-size: .95rem; }
+  .numgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: .55rem; margin-top: 1rem; }
+  .numbtn {
+    font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1.15rem;
+    background: var(--card-2); color: var(--text);
+    border: 2px solid var(--line); border-radius: 14px;
+    padding: .5rem 0 .3rem; cursor: pointer;
+    box-shadow: 0 4px 0 #14163a;
+    transition: transform .08s, box-shadow .08s, border-color .15s;
+    display: flex; flex-direction: column; align-items: center; gap: .05rem;
+  }
+  .numbtn small { font-size: .62rem; font-weight: 800; color: var(--text-dim); font-family: "Nunito", sans-serif; }
+  .numbtn:hover { border-color: var(--kid); }
+  .numbtn:active { transform: translateY(3px); box-shadow: 0 1px 0 #14163a; }
+  .numbtn.sel { border-color: var(--gold); background: #37310f; color: var(--gold); }
+  .numbtn.done { opacity: .35; cursor: not-allowed; text-decoration: line-through; }
+  .numbtn.rand { grid-column: span 2; color: var(--violet); border-color: var(--violet); }
+  .numbtn.rand.sel { border-color: var(--gold); color: var(--gold); }
+  .mission-go { margin-top: 1.1rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .donebox { text-align: center; padding: 1.6rem .5rem .9rem; }
+  .donebox .moon { font-size: 3rem; }
+  .donebox p { color: var(--text-dim); font-weight: 700; margin-top: .4rem; }
+
+  /* trophies */
+  .section-title { font-size: 1.3rem; font-weight: 600; margin: 1.6rem 0 .7rem; color: var(--text); display:flex; align-items:center; gap:.5rem; }
+  .trophy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: .7rem; }
+  .trophy {
+    background: var(--card); border: 2px solid var(--line); border-radius: 16px;
+    padding: .7rem .75rem; text-align: center;
+  }
+  .trophy.locked { opacity: .38; filter: grayscale(1); }
+  .trophy .te { font-size: 1.9rem; line-height: 1.1; }
+  .trophy .tn { font-family: "Fredoka", sans-serif; font-weight: 600; font-size: .95rem; margin-top: .2rem; }
+  .trophy .td { font-size: .74rem; color: var(--text-dim); font-weight: 700; line-height: 1.3; }
+
+  /* per-number table */
+  details.bynum { margin-top: 1.6rem; }
+  details.bynum summary {
+    cursor: pointer; font-family: "Fredoka", sans-serif; font-size: 1.3rem; font-weight: 600;
+    list-style: none; display: flex; align-items: center; gap: .5rem;
+  }
+  details.bynum summary::after { content: "▸"; color: var(--kid); transition: transform .2s; }
+  details.bynum[open] summary::after { transform: rotate(90deg); }
+  .tablewrap { overflow-x: auto; margin-top: .8rem; border: 2px solid var(--line); border-radius: 16px; }
+  table.numstats { width: 100%; border-collapse: collapse; min-width: 560px; background: var(--card); }
+  table.numstats th, table.numstats td { padding: .45rem .7rem; text-align: center; font-size: .9rem; }
+  table.numstats th { background: var(--card-2); color: var(--text-dim); font-weight: 800; text-transform: uppercase; font-size: .72rem; letter-spacing: .05em; position: sticky; top: 0; }
+  table.numstats tr:nth-child(even) td { background: rgba(255,255,255,0.025); }
+  table.numstats td.pn { font-family: "Fredoka", sans-serif; font-weight: 600; color: var(--sky); }
+  .minibar { height: 8px; width: 90px; background: var(--night-deep); border-radius: 99px; overflow: hidden; margin: 0 auto; }
+  .minibar > div { height: 100%; background: var(--mint); border-radius: 99px; }
+
+  /* ================= PROBLEM SCREEN ================= */
+  .prob-top { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .prob-meta { font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1.25rem; }
+  .prob-meta .contest { color: var(--sky); }
+  .timer {
+    margin-left: auto;
+    font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1.6rem;
+    background: var(--night-deep); border: 2px solid var(--line);
+    padding: .25rem 1rem; border-radius: 14px; color: var(--gold);
+    min-width: 108px; text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .paper {
+    background: #ffffff; color: #131313;
+    border-radius: var(--radius);
+    border: 4px solid var(--line);
+    padding: 1.4rem 1.5rem;
+    font-size: 1.06rem;
+    line-height: 1.65;
+    overflow-x: auto;
+  }
+  .paper img { max-width: 100%; height: auto; vertical-align: middle; }
+  .paper p { margin: .6rem 0; }
+  .paper .loading { color: #555; text-align: center; padding: 2rem 0; font-weight: 700; }
+  .spin { display: inline-block; width: 26px; height: 26px; border: 4px solid #ccc; border-top-color: var(--violet); border-radius: 50%; animation: spin 0.9s linear infinite; vertical-align: middle; margin-right: .6rem; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fetch-error { text-align: center; padding: 1.6rem 0; color: #a33; font-weight: 800; }
+
+  .answers { display: flex; gap: .8rem; justify-content: center; margin-top: 1.3rem; flex-wrap: wrap; }
+  .ansbtn {
+    font-family: "Fredoka", sans-serif; font-size: 1.7rem; font-weight: 600;
+    width: 72px; height: 72px; border-radius: 50%;
+    border: 3px solid var(--line); background: var(--card-2); color: var(--text);
+    cursor: pointer; box-shadow: 0 5px 0 #14163a;
+    transition: transform .08s, box-shadow .08s, border-color .12s, background .12s;
+  }
+  .ansbtn:hover { border-color: var(--sky); }
+  .ansbtn:active { transform: translateY(4px); box-shadow: 0 1px 0 #14163a; }
+  .ansbtn.sel { border-color: var(--gold); background: var(--gold); color: var(--gold-ink); }
+  .prob-actions { display: flex; gap: 1rem; justify-content: center; align-items: center; margin-top: 1.3rem; flex-wrap: wrap; }
+  .attribution { text-align: center; color: var(--text-dim); font-size: .78rem; font-weight: 700; margin-top: 1.6rem; }
+  .attribution a { color: var(--text-dim); }
+
+  /* ================= RESULT OVERLAY / MODALS ================= */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(8,9,20,0.82);
+    display: none; align-items: center; justify-content: center; z-index: 50;
+    padding: 1rem;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: var(--card); border: 3px solid var(--line); border-radius: 26px;
+    max-width: 470px; width: 100%; padding: 1.8rem 1.6rem; text-align: center;
+    animation: pop .35s cubic-bezier(.22,1.5,.36,1);
+    max-height: 92vh; overflow-y: auto;
+  }
+  @keyframes pop { from { transform: scale(.7); opacity: 0; } to { transform: none; opacity: 1; } }
+  .modal .bigemoji { font-size: 4rem; line-height: 1.1; min-height: 1.1em; display: flex; align-items: center; justify-content: center; }
+  .modal h2 { font-size: 2rem; font-weight: 600; margin-top: .4rem; }
+  .modal h2.good { color: var(--mint); }
+  .modal h2.bad { color: var(--coral); }
+  .modal .detail { color: var(--text-dim); font-weight: 700; margin-top: .5rem; }
+  .modal .detail b { color: var(--text); }
+  .xpgain {
+    margin: 1rem auto 0; display: inline-block;
+    background: var(--night-deep); border: 2px solid var(--gold); color: var(--gold);
+    font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1.5rem;
+    border-radius: 16px; padding: .4rem 1.3rem;
+    animation: xppulse 1s ease infinite alternate;
+  }
+  @keyframes xppulse { from { transform: scale(1); } to { transform: scale(1.06); } }
+  .modal .btnrow { display: flex; gap: .8rem; justify-content: center; margin-top: 1.4rem; flex-wrap: wrap; }
+
+  /* pet picker */
+  .petpick { display: grid; grid-template-columns: repeat(2, 1fr); gap: .8rem; margin-top: 1.2rem; }
+  .petopt {
+    font: inherit; color: inherit;
+    background: var(--card-2); border: 3px solid var(--line); border-radius: 18px;
+    padding: .9rem .4rem; cursor: pointer; text-align: center;
+    transition: border-color .15s, transform .15s;
+  }
+  .petopt:hover { transform: translateY(-3px); border-color: var(--sky); }
+  .petopt.sel { border-color: var(--gold); background: #37310f; }
+  .petopt .pe { height: 58px; display: flex; align-items: center; justify-content: center; }
+  .petopt .pl { font-family: "Fredoka", sans-serif; font-weight: 600; margin-top: .2rem; }
+  .petopt .pd { font-size: .72rem; color: var(--text-dim); font-weight: 700; }
+
+  /* settings + password */
+  .set-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: .9rem 0; text-align: left; }
+  .set-row label { font-weight: 800; }
+  .set-row input[type=number] {
+    width: 74px; font: inherit; font-weight: 800; text-align: center;
+    background: var(--night-deep); color: var(--text);
+    border: 2px solid var(--line); border-radius: 10px; padding: .35rem .3rem;
+  }
+  .pw-input {
+    width: 100%; font: inherit; font-weight: 800; text-align: center; letter-spacing: .1em;
+    background: var(--night-deep); color: var(--text);
+    border: 2px solid var(--line); border-radius: 12px; padding: .6rem .8rem;
+    margin-top: 1rem;
+  }
+  .pw-input:focus { outline: 2px solid var(--gold); }
+  .pw-err { color: var(--coral); font-weight: 800; font-size: .9rem; margin-top: .5rem; min-height: 1.3em; }
+  .modal.shake { animation: shake .4s; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-10px); } 40%,80% { transform: translateX(10px); } }
+  .uncount-row { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; }
+  .uncount-row select, .uncount-row input {
+    font: inherit; font-weight: 800; background: var(--night-deep); color: var(--text);
+    border: 2px solid var(--line); border-radius: 10px; padding: .35rem .5rem;
+  }
+  .uncount-row input { width: 82px; text-align: center; }
+  .uncount-row .btn { padding: .45rem 1rem; font-size: .95rem; }
+  .pw-err.good { color: var(--mint); }
+  /* problem-image fallbacks (inside the white paper card) */
+  .paper .tex-fallback { font-family: ui-monospace, Consolas, monospace; background: #fff3c4; color: #4a3b00; padding: 0 .3em; border-radius: 4px; }
+  .paper .paper-note { color: #666; font-size: .8rem; font-weight: 700; margin-top: .8rem; }
+  .paper .img-missing { display: inline-block; color: #a33; font-weight: 800; font-size: .9rem; }
+  .paper-banner {
+    background: #fff3c4; color: #4a3b00; border: 2px solid #e0c252; border-radius: 12px;
+    padding: .5rem .8rem; margin-bottom: .8rem; font-weight: 800; font-size: .92rem;
+    display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+  }
+  .paper-banner .btn { padding: .3rem .9rem; font-size: .9rem; }
+  .danger-zone { border-top: 2px dashed var(--line); margin-top: 1.2rem; padding-top: 1rem; }
+  .danger-zone p { font-size: .85rem; color: var(--text-dim); font-weight: 700; margin-bottom: .6rem; }
+
+  /* toasts */
+  #toasts { position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); z-index: 80; display: flex; flex-direction: column; gap: .6rem; align-items: center; }
+  .toast {
+    background: var(--card-2); border: 2px solid var(--gold); border-radius: 16px;
+    padding: .6rem 1.2rem; font-weight: 800; display: flex; gap: .6rem; align-items: center;
+    animation: toastin .4s cubic-bezier(.22,1.5,.36,1);
+    box-shadow: 0 6px 20px rgba(0,0,0,.5);
+  }
+  .toast .e { font-size: 1.5rem; }
+  @keyframes toastin { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* confetti */
+  .confetto { position: fixed; top: -12px; z-index: 90; pointer-events: none; border-radius: 2px; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(105vh) rotate(720deg); opacity: .9; } }
+
+  .soundbtn { position: fixed; top: .7rem; right: .7rem; z-index: 60; background: var(--card); border: 2px solid var(--line); border-radius: 12px; font-size: 1.1rem; padding: .3rem .55rem; cursor: pointer; }
+
+  /* ================= SCRATCHPAD ================= */
+  .scratch-layer { position: absolute; top: 0; left: 0; z-index: 40; pointer-events: none; touch-action: pan-y pinch-zoom; }
+  #scratch-live.on { pointer-events: auto; cursor: crosshair; }
+  body.scratching { overscroll-behavior: none; user-select: none; -webkit-user-select: none; }
+  .scratch-toggle {
+    position: fixed; bottom: 1rem; right: 1rem; z-index: 45;
+    font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1rem;
+    background: var(--violet); color: #1a0f33; border: none; border-radius: 999px;
+    padding: .6rem 1.1rem; box-shadow: 0 5px 0 #6b4fb3; cursor: pointer;
+  }
+  .scratch-toggle:active { transform: translateY(4px); box-shadow: 0 1px 0 #6b4fb3; }
+  .scratch-bar {
+    position: fixed; right: .6rem; bottom: 1rem; z-index: 46;
+    display: flex; flex-direction: column; flex-wrap: wrap-reverse; align-content: flex-end;
+    gap: .4rem; max-height: calc(100vh - 2rem);
+    background: var(--card); border: 2px solid var(--line); border-radius: 22px;
+    padding: .5rem .45rem; box-shadow: 0 8px 24px rgba(0,0,0,.55);
+  }
+  .scratch-bar[hidden], .scratch-toggle[hidden], .scratch-layer[hidden] { display: none; }
+  .scratch-bar .swatch {
+    width: 30px; height: 30px; border-radius: 50%; border: 3px solid var(--line); cursor: pointer; padding: 0;
+  }
+  .scratch-bar .swatch.sel { border-color: var(--gold); transform: scale(1.12); }
+  .scratch-bar .tool {
+    font: inherit; font-size: 1.05rem; background: var(--card-2); color: var(--text);
+    border: 2px solid var(--line); border-radius: 10px; padding: .25rem .55rem; cursor: pointer;
+  }
+  .scratch-bar .tool.sel { border-color: var(--gold); background: #37310f; }
+  .scratch-bar .tool.done { font-family: "Fredoka", sans-serif; font-weight: 600; background: var(--mint); color: var(--mint-ink); border-color: var(--mint); margin-top: .2rem; }
+  .scratch-space { min-height: 100vh; margin-top: 1.5rem; border-top: 2px dashed var(--line); padding-top: .6rem; text-align: center; color: var(--text-dim); font-size: .8rem; font-weight: 800; }
+  .scratch-hint { color: var(--text-dim); font-size: .78rem; font-weight: 800; text-align: center; margin-top: .6rem; }
+
+  @media (max-width: 560px) {
+    .ansbtn { width: 58px; height: 58px; font-size: 1.4rem; }
+    .pet-bubble { width: 76px; height: 76px; font-size: 2.7rem; }
+    .timer { font-size: 1.3rem; }
+  }
+</style>
+</head>
+<body>
+<button class="soundbtn" id="soundbtn" title="Toggle sound">🔊</button>
+
+<div class="wrap">
+
+  <!-- ============ KID SELECT ============ -->
+  <div class="screen" id="screen-select">
+    <div class="logo">AMC 8 QUEST</div>
+    <p class="tagline">One problem a day. XP for your brain. 🚀</p>
+    <div class="kid-cards" id="kid-cards"></div>
+    <div><span class="syncchip" id="syncchip">☁️ syncing…</span></div>
+    <div class="parent-row">
+      <button class="btn ghost" id="btn-settings">⚙️ grown-up settings</button>
+    </div>
+  </div>
+
+  <!-- ============ DASHBOARD ============ -->
+  <div class="screen" id="screen-dash">
+    <div class="dash-head">
+      <div class="pet-bubble" id="d-pet">🥚</div>
+      <div class="dash-id">
+        <h1 id="d-name">—</h1>
+        <div class="lvl-line">Level <span id="d-level">1</span> · <span class="ltitle" id="d-title">—</span></div>
+        <div class="petstage" id="d-petstage"></div>
+        <button class="btn ghost" id="btn-changepet" style="padding:0;font-size:.82rem" hidden>🔄 change buddy · 50 XP</button>
+        <div class="xpbar"><div class="fill" id="d-xpfill" style="width:0%"></div></div>
+        <div class="xptext" id="d-xptext"></div>
+      </div>
+      <button class="btn switch-kid" id="btn-switch">↩ switch</button>
+    </div>
+
+    <div class="grid-stats" id="d-stats"></div>
+
+    <div class="card mission" id="mission-card">
+      <div id="mission-open">
+        <h2 id="mission-title">🎯 Today's Mission</h2>
+        <div class="sub" id="mission-sub"></div>
+        <div class="numgrid" id="numgrid"></div>
+        <div class="mission-go">
+          <button class="btn gold big" id="btn-start" disabled>START ⚡</button>
+          <span id="pick-hint" style="color:var(--text-dim);font-weight:700">pick a problem number first!</span>
+        </div>
+      </div>
+      <div id="mission-resume" class="donebox" style="display:none">
+        <div class="moon">⏳</div>
+        <h2 style="color:var(--gold)">Problem in progress…</h2>
+        <p>You already started today's problem. The clock is ticking!</p>
+        <div style="margin-top:.9rem"><button class="btn gold big" id="btn-resume">JUMP BACK IN ⚡</button></div>
+      </div>
+    </div>
+
+    <div class="section-title">🏆 Trophy Case <span id="trophy-count" style="font-size:.85rem;color:var(--text-dim);font-weight:800"></span></div>
+    <div class="trophy-grid" id="trophies"></div>
+
+    <details class="bynum">
+      <summary>📊 Stats by problem number</summary>
+      <div class="tablewrap">
+        <table class="numstats">
+          <thead><tr><th>#</th><th>Solved</th><th>Progress</th><th>Tries</th><th>Accuracy</th><th>Avg time</th></tr></thead>
+          <tbody id="numstats-body"></tbody>
+        </table>
+      </div>
+    </details>
+  </div>
+
+  <!-- ============ PROBLEM ============ -->
+  <div class="screen" id="screen-problem">
+    <div class="prob-top">
+      <div class="prob-meta"><span class="contest" id="p-contest">—</span> · Problem <span id="p-num">—</span></div>
+      <div class="timer" id="p-timer">0:00</div>
+    </div>
+    <div class="paper" id="p-body"><div class="loading"><span class="spin"></span>Summoning your problem…</div></div>
+    <div class="answers" id="p-answers"></div>
+    <div class="prob-actions">
+      <button class="btn mint big" id="btn-lockin" disabled>LOCK IT IN 🔒</button>
+      <button class="btn ghost" id="btn-giveup">I give up 😵</button>
+    </div>
+    <p class="attribution">Problem © MAA · loaded live from the <a href="https://artofproblemsolving.com/wiki/" target="_blank" rel="noopener">AoPS Wiki</a></p>
+    <p class="scratch-hint">✏️ Need to work it out? Tap <b>Scratch</b> to draw anywhere on the screen — 1 finger draws, 2 fingers scroll or pinch-zoom.</p>
+    <div class="scratch-space">✏️ scratch space — scroll down for room to draw</div>
+  </div>
+
+</div>
+
+<!-- ============ RESULT MODAL ============ -->
+<div class="overlay" id="ov-result">
+  <div class="modal">
+    <div class="bigemoji" id="r-emoji">🎉</div>
+    <h2 id="r-title" class="good">CORRECT!</h2>
+    <div class="detail" id="r-detail"></div>
+    <div class="xpgain" id="r-xp">+0 XP</div>
+    <div class="detail" id="r-xpwhy" style="font-size:.85rem"></div>
+    <div class="btnrow">
+      <a class="btn" id="r-solution" href="#" target="_blank" rel="noopener">See solution ↗</a>
+      <button class="btn gold" id="r-home">Back to base 🏠</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ LEVEL UP MODAL ============ -->
+<div class="overlay" id="ov-levelup">
+  <div class="modal">
+    <div class="bigemoji" id="l-pet">🐣</div>
+    <h2 style="color:var(--gold)">LEVEL UP!</h2>
+    <div class="detail">You reached <b>Level <span id="l-level"></span></b> — <b id="l-title"></b></div>
+    <div class="detail" id="l-evolve" style="color:var(--mint)"></div>
+    <div class="btnrow"><button class="btn gold" id="l-ok">Awesome! ✨</button></div>
+  </div>
+</div>
+
+<!-- ============ PET PICK MODAL ============ -->
+<div class="overlay" id="ov-pet">
+  <div class="modal">
+    <div class="bigemoji">🥚</div>
+    <h2>Choose your quest buddy!</h2>
+    <div class="detail" id="pet-sub">It hatches and evolves as you level up.</div>
+    <div class="petpick" id="petpick"></div>
+    <div class="pw-err" id="pet-msg"></div>
+    <div class="btnrow"><button class="btn" id="pet-cancel" hidden>Never mind</button><button class="btn gold" id="pet-ok" disabled>This one! 💛</button></div>
+  </div>
+</div>
+
+<!-- ============ CONFIRM GIVE UP ============ -->
+<div class="overlay" id="ov-giveup">
+  <div class="modal">
+    <div class="bigemoji">🤔</div>
+    <h2>Give up?</h2>
+    <div class="detail">This counts as a wrong answer — but you'll still get <b>5 XP</b> for trying, and you can see the solution.</div>
+    <div class="btnrow">
+      <button class="btn" id="g-cancel">Keep trying 💪</button>
+      <button class="btn coral" id="g-yes">Show me the answer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PARENT PASSWORD ============ -->
+<div class="overlay" id="ov-password">
+  <div class="modal" id="pw-modal">
+    <div class="bigemoji">🔒</div>
+    <h2>Grown-ups only!</h2>
+    <div class="detail">Enter the parent password to open settings.</div>
+    <input type="password" class="pw-input" id="pw-input" autocomplete="off" placeholder="password">
+    <div class="pw-err" id="pw-err"></div>
+    <div class="btnrow">
+      <button class="btn" id="pw-cancel">Never mind</button>
+      <button class="btn gold" id="pw-ok">Unlock</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SETTINGS MODAL ============ -->
+<div class="overlay" id="ov-settings">
+  <div class="modal">
+    <div class="bigemoji">⚙️</div>
+    <h2>Grown-up settings</h2>
+    <div class="set-row">
+      <label for="set-daily">Daily goal (min. problems)</label>
+      <input type="number" id="set-daily" min="1" max="20" step="1">
+    </div>
+    <div class="danger-zone">
+      <p>Un-count a problem — wipes one player's attempts at a single problem (e.g. it displayed broken) so it can be served again.</p>
+      <div class="uncount-row">
+        <select id="un-kid" aria-label="player"></select>
+        <input type="number" id="un-year" placeholder="year" min="1985" max="2026" aria-label="year">
+        <input type="number" id="un-num" placeholder="#" min="1" max="25" aria-label="problem number">
+        <button class="btn" id="un-go">Un-count</button>
+      </div>
+      <div class="pw-err" id="un-msg"></div>
+    </div>
+    <div class="danger-zone">
+      <p>Danger zone — erases all progress, XP, and trophies for that player, on every device. Cannot be undone.</p>
+      <div class="btnrow" style="margin-top:0" id="reset-btns"></div>
+    </div>
+    <div class="btnrow"><button class="btn gold" id="set-ok">Save & close</button></div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<!-- ============ SCRATCHPAD (problem screen only) ============ -->
+<canvas id="scratch-canvas" class="scratch-layer" hidden></canvas>
+<canvas id="scratch-live" class="scratch-layer" hidden></canvas>
+<button class="scratch-toggle" id="scratch-toggle" hidden>✏️ Scratch</button>
+<div class="scratch-bar" id="scratch-bar" hidden>
+  <span id="scratch-colors" style="display:flex;flex-direction:column;gap:.35rem;align-items:center"></span>
+  <button class="tool" id="sc-eraser" title="Eraser">🧽</button>
+  <button class="tool" id="sc-undo" title="Undo">↶</button>
+  <button class="tool" id="sc-clear" title="Clear all">🗑️</button>
+  <button class="tool done" id="sc-done" title="Done drawing">✅</button>
+</div>
+
+<script src="config.js"></script>
+<script>
+"use strict";
+
+/* ==================== CONTEST DATA ==================== */
+const ANSWERS = {
+  1985: "ABDCCDCAACEBBBCDDEBCEBEDA",
+  1986: "AACCDEBEEBADCCBAEBDDECBBD",
+  1987: "EBECABCBCBBCEBDEDCAACDDDA",
+  1988: "DCDBCEBBDAECDECEBCACCEDAA",
+  1989: "EDAEDCDECDBEACDABBBDDCCEC",
+  1990: "CAEEBDCDDAEBCBEDACBABBBCC",
+  1991: "BCEEBCDDBBBDCDCBCCCAADAEC",
+  1992: "BDDEEDACBBBCBDCBBACDBCBAD",
+  1993: "CCBECBADDBCEDCACBAADDDCCE",
+  1994: "DDCBBABCAABACEAEDBEDCDDBA",
+  1995: "DCECCCBDCADEEBBCDCDBBABCD",
+  1996: "BCABACBBDDDBEBECCACADBECA",
+  1997: "CDBEACDBCCADADBEEBDADECCD",
+  1998: "BEBEBBDCCECACEDBCBADBDCED",
+  1999: "ACDADEEACEDBCDDBCEBBBDCBA",
+  2000: "BADECABDDECDCDCCAECABCBDB",
+  2001: "DDEECBAEDACADCAEBDDADEDBD",
+  2002: "DACBCAEDBECBEBEECEDDECBBB",
+  2003: "ECDCBBAACEBEBDBDEDCDBCABC",
+  2004: "BBABDCBBDECBECCCDABDDBDCD",
+  2005: "BCDCBCBEDDCDCBCDECAACEBBA",
+  2006: "DCABDCBECACDDBCEBDDCADAAB",
+  2007: "DECDBEDBBDDACCAACDCADCBCB",
+  2008: "BAACEDEDDDACCCBDDEBBCACCA",
+  2009: "EDCBDACBBDDDBBDDBCDDDDBEE",
+  2010: "CDCCBEBDDBBDECCBDCCACEBAE",
+  2011: "EEDCDDCBECABCCDCADDDCDDAA",
+  2012: "EBBCEEBDCDDACBDCBACBDDCAC",
+  2013: "ADECECCCCCDBACBEBBDCEEBCA",
+  2014: "AEBECDBDDAABDBCBBDABAEACB",
+  2015: "ADDEABEDDBBCDDDBDBADCCDBC",
+  2016: "CAABEBBCBDBBDACDDCEABCCAB",
+  2017: "AECDBDADDCCDBCDDCBDBADCDB",
+  2018: "ADDCECBCBCCBADDCAECAEBDCE",
+  2019: "DEEDBCAEBBDAACBDBCCDEEBBC",
+  2020: "ECDBCACCDCEABDCEBABBAEBAA",
+  2022: "ADEECCBBBEDBDDCBBCCDCADCE",
+  2023: "DEBDBCBABDCBDEBCADCDCDCAA",
+  2024: "BCEEBDEDEBDEBACDEACDEBCBC",
+  2025: "BBCBCCDABDCCAECCDBDAADBEB",
+  2026: "ACDEBECDBABDABADABDDBACEE",
+};
+const YEARS = Object.keys(ANSWERS).map(Number).sort((a, b) => a - b);
+const TOTAL_PER_NUM = YEARS.length; // 41
+/* All family-specific settings live in config.js — edit that file, not this one. */
+const CFG = window.QUEST_CONFIG || {};
+const KIDS = (CFG.players && Object.keys(CFG.players).length)
+  ? CFG.players
+  : { player1: { name: "Player 1", color: "#53c8ff" }, player2: { name: "Player 2", color: "#ff9ce0" } };
+const LETTERS = ["A", "B", "C", "D", "E"];
+
+const contestName = y => (y <= 1998 ? y + " AJHSME" : y + " AMC 8");
+const wikiPage = (y, n) => y + "_" + (y <= 1998 ? "AJHSME" : "AMC_8") + "_Problems/Problem_" + n;
+const wikiYearPage = y => y + "_" + (y <= 1998 ? "AJHSME" : "AMC_8") + "_Problems";
+const wikiUrl = (y, n) => "https://artofproblemsolving.com/wiki/index.php/" + wikiPage(y, n);
+const answerOf = (y, n) => ANSWERS[y][n - 1];
+
+/* ==================== SYNC BACKEND (Google Form -> Sheet, optional) ==================== */
+const SYNC = Object.assign({ form: "", fields: { kid: "", type: "", info: "" }, sheet: "" }, CFG.sync || {});
+const SYNC_ENABLED = !!(SYNC.form && SYNC.sheet && SYNC.fields && SYNC.fields.kid && SYNC.fields.type && SYNC.fields.info);
+const PARENT_HASH = CFG.parentPasswordHash || "";
+
+/* ==================== GAME CONFIG ==================== */
+const LEVEL_TITLES = [
+  "Math Egg", "Number Rookie", "Digit Explorer", "Pattern Scout", "Fraction Fighter",
+  "Puzzle Prowler", "Geometry Gremlin", "Algebra Apprentice", "Prime Hunter", "Logic Knight",
+  "Speed Solver", "Number Ninja", "Math Wizard", "Problem Slayer", "Counting Captain",
+  "Theorem Tamer", "Math Master", "Grand Solver", "Olympiad Hero", "Math Legend",
+  "Cosmic Calculator", "Infinity Champion", "AMC Grandmaster",
+];
+const xpCost = lvl => 80 + 40 * (lvl - 1);
+function levelFromXp(xp) {
+  let lvl = 1, spent = 0;
+  while (xp - spent >= xpCost(lvl)) { spent += xpCost(lvl); lvl++; }
+  return { lvl, into: xp - spent, need: xpCost(lvl) };
+}
+const speedParSec = n => 30 + 6 * n;
+const SPEED_BONUS = 15, XP_TRY = 5, PET_CHANGE_COST = 50;
+const xpFor = r => (r.ok ? 20 + 4 * r.n + (r.t < speedParSec(r.n) ? SPEED_BONUS : 0) : XP_TRY);
+
+const PETS = {
+  dragon:  { label: "Dragon",  desc: "fire & fury" },
+  unicorn: { label: "Unicorn", desc: "sparkle power" },
+  robot:   { label: "Robot",   desc: "beep boop" },
+  cat:     { label: "Cat",     desc: "sneaky & smart" },
+  fox:     { label: "Fox",     desc: "sly & quick" },
+  shark:   { label: "Shark",   desc: "ocean boss" },
+  dino:    { label: "Dino",    desc: "prehistoric power" },
+  penguin: { label: "Penguin", desc: "cool under pressure" },
+};
+const petImgSrc = (pet, stage) => "assets/pets/" + pet + "/stage" + stage + ".svg";
+const STAGE_LEVELS = [1, 3, 6, 10, 15, 21, 28, 36, 45, 55];
+const STAGE_NAMES = ["Egg", "Hatchling", "Kid", "Scrapper", "Champion", "Hero", "Mega", "Ultra", "Mythic", "LEGENDARY"];
+function petStage(lvl) { let s = 0; for (let i = 0; i < STAGE_LEVELS.length; i++) if (lvl >= STAGE_LEVELS[i]) s = i; return s; }
+
+const BADGES = [
+  { id: "first",    e: "🌟", n: "First Star",      d: "Solve your first problem" },
+  { id: "ten",      e: "🔟", n: "Perfect Ten",     d: "Solve 10 problems" },
+  { id: "fifty",    e: "⚡", n: "Fifty Frenzy",    d: "Solve 50 problems" },
+  { id: "hundred",  e: "💯", n: "Century Club",    d: "Solve 100 problems" },
+  { id: "big250",   e: "🏆", n: "Problem Crusher", d: "Solve 250 problems" },
+  { id: "streak3",  e: "🔥", n: "On Fire",         d: "Practice 3 days in a row" },
+  { id: "streak7",  e: "📅", n: "Week Warrior",    d: "Practice 7 days in a row" },
+  { id: "streak30", e: "🌈", n: "Monthly Legend",  d: "Practice 30 days in a row" },
+  { id: "rocket",   e: "🚀", n: "Rocket Brain",    d: "Solve correctly in under 60s" },
+  { id: "deep",     e: "🦈", n: "Deep End",        d: "Solve a problem numbered 20+" },
+  { id: "summit",   e: "🏔️", n: "The Summit",      d: "Solve a #25 — the final boss" },
+  { id: "comeback", e: "💪", n: "Comeback Kid",    d: "Solve one you missed before" },
+  { id: "sharp5",   e: "🎯", n: "Sharpshooter",    d: "5 correct in a row" },
+  { id: "sharp10",  e: "🧠", n: "Unstoppable",     d: "10 correct in a row" },
+  { id: "retro",    e: "🕰️", n: "Time Traveler",   d: "Solve a problem from before 1999" },
+];
+
+/* ==================== LOCAL STORAGE ==================== */
+const store = {
+  get(k, fb) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; } catch { return fb; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  del(k) { try { localStorage.removeItem(k); } catch {} },
+};
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(36).slice(2));
+
+/* ==================== EVENT LOG + SYNC ==================== */
+// event: { kid: <player id>|'*', type: 'answer'|'pet'|'reset'|'daily', info: {id, ...} }
+let serverEvents = store.get("amc8q.cache", []);
+let outbox = store.get("amc8q.outbox", []);
+let syncState = "pending"; // 'ok' | 'fail' | 'pending'
+let gvizSeq = 0;
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+function validEvent(ev) {
+  if (!ev || typeof ev !== "object" || !ev.info || typeof ev.info !== "object") return false;
+  if (typeof ev.info.id !== "string" || !ev.info.id || ev.info.id.length > 64) return false;
+  if (!(ev.kid in KIDS) && ev.kid !== "*") return false;
+  const i = ev.info;
+  switch (ev.type) {
+    case "answer":
+      return ANSWERS[i.y] !== undefined && Number.isInteger(i.n) && i.n >= 1 && i.n <= 25 &&
+        (i.a === null || LETTERS.includes(i.a)) && typeof i.ok === "boolean" &&
+        typeof i.t === "number" && i.t >= 0 && i.t < 86400 && typeof i.d === "string" && DATE_RE.test(i.d);
+    case "pet": return i.pet in PETS;
+    case "reset": return true;
+    case "daily": return Number.isInteger(i.daily) && i.daily >= 1 && i.daily <= 20;
+    case "spend": // XP spent on extras (e.g. changing pets)
+      return Number.isInteger(i.amount) && i.amount >= 1 && i.amount <= 10000 &&
+        typeof i.what === "string" && i.what.length <= 32 && typeof i.d === "string" && DATE_RE.test(i.d);
+    case "void": // un-count a player's attempts at one problem (e.g. it rendered broken)
+      return ANSWERS[i.y] !== undefined && Number.isInteger(i.n) && i.n >= 1 && i.n <= 25 &&
+        typeof i.ts === "number" && typeof i.d === "string" && DATE_RE.test(i.d);
+    default: return false;
+  }
+}
+
+function allEvents() {
+  const seen = new Set();
+  const out = [];
+  for (const ev of serverEvents.concat(outbox)) {
+    if (!validEvent(ev) || seen.has(ev.info.id)) continue;
+    seen.add(ev.info.id);
+    out.push(ev);
+  }
+  return out;
+}
+
+function postEvent(ev) {
+  if (!SYNC_ENABLED) { ev.sent = true; store.set("amc8q.outbox", outbox); return Promise.resolve(); }
+  const body = new URLSearchParams();
+  body.set(SYNC.fields.kid, ev.kid);
+  body.set(SYNC.fields.type, ev.type);
+  body.set(SYNC.fields.info, JSON.stringify(ev.info));
+  ev.sent = true; // optimistic — flipped back on network failure so the retry loop resends
+  store.set("amc8q.outbox", outbox);
+  return fetch(SYNC.form, { method: "POST", mode: "no-cors", body })
+    .catch(() => { ev.sent = false; store.set("amc8q.outbox", outbox); });
+}
+
+function sendEvent(kid, type, info) {
+  const ev = { kid, type, info: Object.assign({ id: uuid() }, info), sent: false };
+  outbox.push(ev);
+  store.set("amc8q.outbox", outbox);
+  postEvent(ev);
+  return ev;
+}
+
+function syncNow() {
+  if (!SYNC_ENABLED) {
+    // device-local mode: the outbox IS the permanent event log
+    syncState = "local";
+    renderSyncChip();
+    return Promise.resolve(true);
+  }
+  return new Promise(resolve => {
+    const cb = "__amc8gv" + (++gvizSeq);
+    let done = false;
+    const finish = ok => { if (!done) { done = true; delete window[cb]; script.remove(); resolve(ok); } };
+    window[cb] = resp => {
+      try {
+        const rows = (resp.table.rows || []).map(r => (r.c || []).map(c => (c ? c.v : null)));
+        const evs = [];
+        for (const row of rows) {
+          try {
+            const info = JSON.parse(row[3]);
+            const ev = { kid: row[1], type: row[2], info };
+            if (validEvent(ev)) evs.push(ev);
+          } catch {}
+        }
+        serverEvents = evs;
+        store.set("amc8q.cache", serverEvents);
+        const serverIds = new Set(evs.map(e => e.info.id));
+        outbox = outbox.filter(ev => !serverIds.has(ev.info.id));
+        for (const ev of outbox) if (!ev.sent) postEvent(ev); // retry unsent
+        store.set("amc8q.outbox", outbox);
+        syncState = "ok";
+      } catch { syncState = "fail"; }
+      renderSyncChip();
+      finish(syncState === "ok");
+    };
+    const script = document.createElement("script");
+    script.src = "https://docs.google.com/spreadsheets/d/" + SYNC.sheet + "/gviz/tq?tqx=responseHandler:" + cb + "&headers=1&_=" + Date.now();
+    script.onerror = () => { syncState = "fail"; renderSyncChip(); finish(false); };
+    document.body.appendChild(script);
+    setTimeout(() => { if (!done) { syncState = "fail"; renderSyncChip(); finish(false); } }, 12000);
+  });
+}
+
+function renderSyncChip() {
+  const chip = $("syncchip");
+  if (!chip) return;
+  if (syncState === "ok") { chip.className = "syncchip"; chip.textContent = "☁️ progress synced"; }
+  else if (syncState === "local") { chip.className = "syncchip"; chip.textContent = "💾 progress saves on this device (sync not set up)"; }
+  else if (syncState === "pending") { chip.className = "syncchip"; chip.textContent = "☁️ syncing…"; }
+  else { chip.className = "syncchip err"; chip.textContent = "⚠️ offline — progress saves here & syncs later"; }
+}
+
+/* ==================== DERIVED STATE (fold over events) ==================== */
+function foldKid(kid) {
+  const evs = allEvents().filter(e => e.kid === kid);
+  let lastReset = -1;
+  evs.forEach((e, i) => { if (e.type === "reset") lastReset = i; });
+  const active_ = evs.slice(lastReset + 1);
+  const voids = active_.filter(e => e.type === "void").map(e => e.info);
+  // an answer is voided if a void for the same problem was issued after it
+  // (answers carry a ms timestamp; older ones without it fall back to the date)
+  const isVoided = a => voids.some(v => v.y === a.y && v.n === a.n && (a.ts ? a.ts < v.ts : a.d <= v.d));
+  let pet = null;
+  const records = [];
+  for (const e of active_) {
+    if (e.type === "pet") pet = e.info.pet;
+    else if (e.type === "answer") {
+      if (isVoided(e.info)) continue;
+      const r = { y: e.info.y, n: e.info.n, a: e.info.a, ok: e.info.ok, t: e.info.t, d: e.info.d };
+      r.xp = xpFor(r);
+      records.push(r);
+    }
+  }
+  const spent = active_.filter(e => e.type === "spend").reduce((sum, e) => sum + e.info.amount, 0);
+  const xp = Math.max(0, records.reduce((s, r) => s + r.xp, 0) - spent);
+  return { pet, records, xp, badges: computeBadges(records) };
+}
+
+function foldSettings() {
+  let daily = 1;
+  for (const e of allEvents()) if (e.type === "daily") daily = e.info.daily;
+  return { daily };
+}
+
+function computeBadges(records) {
+  const earned = {}; // id -> date
+  const grant = (id, d) => { if (!earned[id]) earned[id] = d; };
+  const solved = new Set();
+  const wrongSeen = new Set();
+  let run = 0;
+  const days = [];
+  for (const r of records) {
+    if (!days.length || days[days.length - 1] !== r.d) {
+      if (!days.includes(r.d)) days.push(r.d);
+    }
+    if (r.ok) {
+      const key = r.y + "-" + r.n;
+      if (wrongSeen.has(key)) grant("comeback", r.d);
+      solved.add(key);
+      run++;
+      if (solved.size >= 1) grant("first", r.d);
+      if (solved.size >= 10) grant("ten", r.d);
+      if (solved.size >= 50) grant("fifty", r.d);
+      if (solved.size >= 100) grant("hundred", r.d);
+      if (solved.size >= 250) grant("big250", r.d);
+      if (r.t < 60) grant("rocket", r.d);
+      if (r.n >= 20) grant("deep", r.d);
+      if (r.n === 25) grant("summit", r.d);
+      if (r.y <= 1998) grant("retro", r.d);
+      if (run >= 5) grant("sharp5", r.d);
+      if (run >= 10) grant("sharp10", r.d);
+    } else {
+      wrongSeen.add(r.y + "-" + r.n);
+      run = 0;
+    }
+  }
+  // streak badges from max consecutive-day run in history
+  const sorted = [...new Set(records.map(r => r.d))].sort();
+  let consec = 0, prev = null;
+  for (const d of sorted) {
+    if (prev) {
+      const p = new Date(prev + "T12:00:00"), c = new Date(d + "T12:00:00");
+      consec = (c - p === 86400000) ? consec + 1 : 1;
+    } else consec = 1;
+    if (consec >= 3) grant("streak3", d);
+    if (consec >= 7) grant("streak7", d);
+    if (consec >= 30) grant("streak30", d);
+    prev = d;
+  }
+  return earned;
+}
+
+function solvedYearsFor(p, n) { const ys = new Set(); for (const r of p.records) if (r.ok && r.n === n) ys.add(r.y); return ys; }
+function attemptedYearsFor(p, n) { const ys = new Set(); for (const r of p.records) if (r.n === n) ys.add(r.y); return ys; }
+function solvedCount(p) { const s = new Set(); for (const r of p.records) if (r.ok) s.add(r.y + "-" + r.n); return s.size; }
+function attemptsToday(p) { const t = todayStr(); return p.records.filter(r => r.d === t).length; }
+function streakOf(p) {
+  const days = new Set(p.records.map(r => r.d));
+  if (!days.size) return 0;
+  let d = new Date();
+  if (!days.has(todayStr())) d.setDate(d.getDate() - 1);
+  let streak = 0;
+  for (;;) {
+    const s = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    if (!days.has(s)) break;
+    streak++; d.setDate(d.getDate() - 1);
+  }
+  return streak;
+}
+function fmtTime(sec) {
+  sec = Math.round(sec);
+  return Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0");
+}
+const petArt = (p, px) => (p.pet
+  ? `<img class="petimg" src="${petImgSrc(p.pet, petStage(levelFromXp(p.xp).lvl))}" width="${px}" height="${px}" alt="${PETS[p.pet].label}">`
+  : `<span style="font-size:${Math.round(px * 0.78)}px;line-height:1">🥚</span>`);
+
+/* active (in-progress) problem is per-device on purpose */
+const activeKey = kid => "amc8q.active." + kid;
+const getActive = kid => store.get(activeKey(kid), null);
+const setActive = (kid, a) => (a ? store.set(activeKey(kid), a) : store.del(activeKey(kid)));
+
+/* local-only prefs */
+const prefs = Object.assign({ sound: true }, store.get("amc8q.prefs", {}));
+const savePrefs = () => store.set("amc8q.prefs", prefs);
+
+/* ==================== SOUND ==================== */
+let audioCtx = null;
+function beep(notes) {
+  if (!prefs.sound) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    let t = audioCtx.currentTime;
+    for (const [freq, dur] of notes) {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = "triangle"; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.18, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g).connect(audioCtx.destination);
+      o.start(t); o.stop(t + dur + 0.02);
+      t += dur * 0.85;
+    }
+  } catch {}
+}
+const sndClick = () => beep([[660, 0.07]]);
+const sndCorrect = () => beep([[523, 0.14], [659, 0.14], [784, 0.22], [1047, 0.3]]);
+const sndWrong = () => beep([[220, 0.2], [175, 0.35]]);
+const sndLevel = () => beep([[523, 0.12], [659, 0.12], [784, 0.12], [1047, 0.18], [784, 0.1], [1047, 0.35]]);
+const sndBadge = () => beep([[880, 0.1], [1109, 0.1], [1319, 0.25]]);
+
+/* ==================== CONFETTI + TOASTS ==================== */
+function confetti(count) {
+  const colors = ["#ffd21f", "#3ddc97", "#53c8ff", "#ff5f7a", "#b28bff", "#ff9ce0"];
+  for (let i = 0; i < count; i++) {
+    const c = document.createElement("div");
+    c.className = "confetto";
+    const size = 6 + Math.random() * 8;
+    c.style.width = size + "px";
+    c.style.height = size * (0.5 + Math.random()) + "px";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.animationDuration = 2 + Math.random() * 2.4 + "s";
+    c.style.animationDelay = Math.random() * 0.6 + "s";
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 5500);
+  }
+}
+function toast(emoji, text) {
+  const t = document.createElement("div");
+  t.className = "toast";
+  const e = document.createElement("span"); e.className = "e"; e.textContent = emoji;
+  const s = document.createElement("span"); s.textContent = text;
+  t.append(e, s);
+  document.getElementById("toasts").appendChild(t);
+  setTimeout(() => t.remove(), 4200);
+}
+
+/* ==================== SCREENS ==================== */
+const $ = id => document.getElementById(id);
+let currentKid = null;
+let pickedNum = null;
+let timerInterval = null;
+let problemLoaded = false;
+let pendingPetPick = null;
+let pendingLevelUp = null, pendingBadges = [];
+
+function show(screen) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  $(screen).classList.add("active");
+  window.scrollTo(0, 0);
+  scratch.setVisible(screen === "screen-problem");
+}
+function openModal(id) { $(id).classList.add("open"); }
+function closeModal(id) { $(id).classList.remove("open"); }
+
+/* ---------- kid select ---------- */
+// alphabetical, except profiles used on this device float to the top, most recent first
+function playerOrder() {
+  const recent = store.get("amc8q.recent", []).filter(id => id in KIDS);
+  const alpha = Object.keys(KIDS).sort((a, b) => KIDS[a].name.localeCompare(KIDS[b].name));
+  return recent.concat(alpha.filter(id => !recent.includes(id)));
+}
+
+function renderSelect() {
+  const box = $("kid-cards");
+  box.innerHTML = "";
+  for (const id of playerOrder()) {
+    const p = foldKid(id);
+    const { lvl } = levelFromXp(p.xp);
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "kid-card";
+    card.style.setProperty("--kc", KIDS[id].color);
+    card.innerHTML = `
+      <div class="pet">${petArt(p, 52)}</div>
+      <div class="kname">${KIDS[id].name}</div>
+      <div class="klvl">Level ${lvl} · ${solvedCount(p)} solved</div>`;
+    card.addEventListener("click", () => { sndClick(); enterKid(id); });
+    box.appendChild(card);
+  }
+  renderSyncChip();
+}
+
+function enterKid(id) {
+  currentKid = id;
+  store.set("amc8q.recent", [id].concat(store.get("amc8q.recent", []).filter(x => x !== id)).slice(0, 20));
+  document.documentElement.style.setProperty("--kid", KIDS[id].color);
+  syncNow().then(() => { if (currentKid === id && $("screen-dash").classList.contains("active")) renderDash(); });
+  const p = foldKid(id);
+  if (!p.pet) { showPetPicker("first"); return; }
+  renderDash();
+  show("screen-dash");
+}
+
+/* ---------- pet picker ---------- */
+let petPickMode = "first";
+function showPetPicker(mode) {
+  petPickMode = mode || "first";
+  pendingPetPick = null;
+  const box = $("petpick");
+  box.innerHTML = "";
+  $("pet-ok").disabled = true;
+  $("pet-msg").textContent = "";
+  $("pet-cancel").hidden = petPickMode === "first";
+  $("pet-ok").textContent = petPickMode === "first" ? "This one! 💛" : `Switch! (−${PET_CHANGE_COST} XP)`;
+  $("pet-sub").textContent = petPickMode === "first"
+    ? "It hatches and evolves as you level up."
+    : `Changing buddies costs ${PET_CHANGE_COST} XP. Your trophies and solved problems stay.`;
+  for (const key of Object.keys(PETS)) {
+    const opt = document.createElement("button");
+    opt.type = "button";
+    opt.className = "petopt";
+    opt.innerHTML = `<div class="pe"><img src="${petImgSrc(key, 2)}" width="56" height="56" alt=""></div><div class="pl">${PETS[key].label}</div><div class="pd">${PETS[key].desc}</div>`;
+    opt.addEventListener("click", () => {
+      sndClick();
+      pendingPetPick = key;
+      box.querySelectorAll(".petopt").forEach(o => o.classList.remove("sel"));
+      opt.classList.add("sel");
+      $("pet-ok").disabled = false;
+    });
+    box.appendChild(opt);
+  }
+  openModal("ov-pet");
+}
+$("pet-cancel").addEventListener("click", () => closeModal("ov-pet"));
+$("pet-ok").addEventListener("click", () => {
+  if (!pendingPetPick) return;
+  if (petPickMode === "change") {
+    const prof = foldKid(currentKid);
+    if (pendingPetPick === prof.pet) { closeModal("ov-pet"); return; }
+    if (prof.xp < PET_CHANGE_COST) {
+      $("pet-msg").textContent = `You need ${PET_CHANGE_COST} XP to change buddies — solve a problem first!`;
+      return;
+    }
+    const oldLvl = levelFromXp(prof.xp).lvl, newLvl = levelFromXp(prof.xp - PET_CHANGE_COST).lvl;
+    if (newLvl < oldLvl && !confirm(`Heads up: spending ${PET_CHANGE_COST} XP will drop ${KIDS[currentKid].name} from level ${oldLvl} to ${newLvl} (the pet may step back a stage). Switch anyway?`)) return;
+    sendEvent(currentKid, "spend", { amount: PET_CHANGE_COST, what: "pet-change", d: todayStr(), ts: Date.now() });
+    sendEvent(currentKid, "pet", { pet: pendingPetPick, d: todayStr() });
+    closeModal("ov-pet");
+    sndBadge();
+    toast("🔄", `Say hello to your new ${PETS[pendingPetPick].label.toLowerCase()}!`);
+    renderDash();
+    return;
+  }
+  sendEvent(currentKid, "pet", { pet: pendingPetPick, d: todayStr() });
+  closeModal("ov-pet");
+  sndBadge();
+  renderDash();
+  show("screen-dash");
+});
+$("btn-changepet").addEventListener("click", () => { sndClick(); showPetPicker("change"); openModal("ov-pet"); });
+
+/* ---------- dashboard ---------- */
+function renderDash() {
+  const p = foldKid(currentKid);
+  const kid = KIDS[currentKid];
+  const { lvl, into, need } = levelFromXp(p.xp);
+  $("d-name").textContent = kid.name;
+  $("d-pet").innerHTML = petArt(p, 74);
+  $("d-level").textContent = lvl;
+  $("d-title").textContent = LEVEL_TITLES[Math.min(lvl - 1, LEVEL_TITLES.length - 1)];
+  $("d-petstage").textContent = p.pet ? PETS[p.pet].label + " · stage: " + STAGE_NAMES[petStage(lvl)] : "";
+  $("btn-changepet").hidden = !p.pet;
+  $("d-xpfill").style.width = Math.round(100 * into / need) + "%";
+  $("d-xptext").textContent = `${p.xp} XP total · ${into} / ${need} to level ${lvl + 1}`;
+
+  const solved = solvedCount(p);
+  const attempts = p.records.length;
+  const acc = attempts ? Math.round(100 * p.records.filter(r => r.ok).length / attempts) : 0;
+  const avgT = attempts ? p.records.reduce((s, r) => s + r.t, 0) / attempts : 0;
+  const streak = streakOf(p);
+  let hardest = 0;
+  for (const r of p.records) if (r.ok && r.n > hardest) hardest = r.n;
+  const hardestCount = hardest ? solvedYearsFor(p, hardest).size : 0;
+  $("d-stats").innerHTML = `
+    <div class="stat"><div class="v">${solved}<small>/${YEARS.length * 25}</small></div><div class="k">solved</div></div>
+    <div class="stat"><div class="v">${acc}%</div><div class="k">accuracy</div></div>
+    <div class="stat"><div class="v">${attempts ? fmtTime(avgT) : "—"}</div><div class="k">avg time</div></div>
+    <div class="stat"><div class="v">${streak}🔥</div><div class="k">day streak</div></div>
+    <div class="stat"><div class="v">${hardest ? "#" + hardest : "—"}</div><div class="k">hardest solved${hardest ? " (" + hardestCount + "/" + TOTAL_PER_NUM + ")" : ""}</div></div>`;
+
+  renderMission(p);
+  renderTrophies(p);
+  renderNumTable(p);
+}
+
+function renderMission(p) {
+  const goal = foldSettings().daily;
+  const used = attemptsToday(p);
+  $("mission-open").style.display = "none";
+  $("mission-resume").style.display = "none";
+
+  if (getActive(currentKid)) { $("mission-resume").style.display = "block"; return; }
+
+  $("mission-open").style.display = "block";
+  if (used >= goal) {
+    $("mission-title").textContent = "🌟 Mission complete!";
+    $("mission-sub").textContent = used > goal
+      ? `${used} problems done today (daily goal: ${goal}) — bonus rounds are pure extra XP 🎁`
+      : `Daily goal of ${goal} done — bonus rounds are pure extra XP 🎁`;
+  } else {
+    $("mission-title").textContent = "🎯 Today's Mission";
+    $("mission-sub").textContent =
+      (goal > 1 ? `${goal - used} of ${goal} to go today · ` : "") +
+      "pick your problem number — higher numbers are harder & worth more XP";
+  }
+  pickedNum = null;
+  $("btn-start").disabled = true;
+  $("pick-hint").style.display = "";
+
+  const grid = $("numgrid");
+  grid.innerHTML = "";
+  let anyAvailable = false;
+  for (let n = 1; n <= 25; n++) {
+    const solvedYears = solvedYearsFor(p, n).size;
+    const b = document.createElement("button");
+    b.className = "numbtn";
+    b.innerHTML = `${n}<small>${solvedYears}/${TOTAL_PER_NUM}</small>`;
+    if (solvedYears >= TOTAL_PER_NUM) {
+      b.classList.add("done");
+      b.disabled = true;
+      b.title = "You solved every #" + n + "! 🤯";
+    } else {
+      anyAvailable = true;
+      b.addEventListener("click", () => { sndClick(); pickNum(n, b); });
+    }
+    grid.appendChild(b);
+  }
+  const rb = document.createElement("button");
+  rb.className = "numbtn rand";
+  rb.innerHTML = `🎲 RANDOM<small>surprise me</small>`;
+  rb.disabled = !anyAvailable;
+  rb.addEventListener("click", () => { sndClick(); pickNum("random", rb); });
+  grid.appendChild(rb);
+}
+
+function pickNum(n, btn) {
+  pickedNum = n;
+  $("numgrid").querySelectorAll(".numbtn").forEach(b => b.classList.remove("sel"));
+  btn.classList.add("sel");
+  $("btn-start").disabled = false;
+  $("pick-hint").style.display = "none";
+}
+
+function renderTrophies(p) {
+  const box = $("trophies");
+  box.innerHTML = "";
+  let earned = 0;
+  for (const b of BADGES) {
+    const has = !!p.badges[b.id];
+    if (has) earned++;
+    const el = document.createElement("div");
+    el.className = "trophy" + (has ? "" : " locked");
+    el.innerHTML = `<div class="te">${b.e}</div><div class="tn">${b.n}</div><div class="td">${b.d}</div>`;
+    if (has) el.title = "Earned " + p.badges[b.id];
+    box.appendChild(el);
+  }
+  $("trophy-count").textContent = earned + " / " + BADGES.length;
+}
+
+function renderNumTable(p) {
+  const body = $("numstats-body");
+  body.innerHTML = "";
+  for (let n = 1; n <= 25; n++) {
+    const recs = p.records.filter(r => r.n === n);
+    const solved = solvedYearsFor(p, n).size;
+    const acc = recs.length ? Math.round(100 * recs.filter(r => r.ok).length / recs.length) : null;
+    const avg = recs.length ? fmtTime(recs.reduce((s, r) => s + r.t, 0) / recs.length) : "—";
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="pn">#${n}</td>
+      <td>${solved} / ${TOTAL_PER_NUM}</td>
+      <td><div class="minibar"><div style="width:${Math.round(100 * solved / TOTAL_PER_NUM)}%"></div></div></td>
+      <td>${recs.length}</td>
+      <td>${acc === null ? "—" : acc + "%"}</td>
+      <td>${avg}</td>`;
+    body.appendChild(tr);
+  }
+}
+
+/* ---------- problem selection ---------- */
+function chooseProblem(p, num) {
+  if (num === "random") {
+    const nums = [];
+    for (let n = 1; n <= 25; n++) if (solvedYearsFor(p, n).size < TOTAL_PER_NUM) nums.push(n);
+    num = nums[Math.floor(Math.random() * nums.length)];
+  }
+  const solvedY = solvedYearsFor(p, num);
+  const attemptedY = attemptedYearsFor(p, num);
+  const freshY = YEARS.filter(y => !attemptedY.has(y));
+  const retryY = YEARS.filter(y => attemptedY.has(y) && !solvedY.has(y));
+  const candidates = freshY.length ? freshY : retryY;
+  const y = candidates[Math.floor(Math.random() * candidates.length)];
+  return { y, n: num };
+}
+
+/* ---------- problem screen ---------- */
+async function startProblem(resume) {
+  if (!resume) {
+    const p = foldKid(currentKid);
+    const { y, n } = chooseProblem(p, pickedNum);
+    setActive(currentKid, { y, n, start: Date.now(), d: todayStr() });
+  }
+  const a = getActive(currentKid);
+  if (!a) { renderDash(); show("screen-dash"); return; }
+  $("p-contest").textContent = contestName(a.y);
+  $("p-num").textContent = a.n;
+  problemLoaded = false;
+  renderAnswerButtons();
+  scratch.reset();
+  show("screen-problem");
+  startTimer();
+  await loadProblemBody(a.y, a.n);
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  const tick = () => {
+    const a = getActive(currentKid);
+    if (!a) return;
+    $("p-timer").textContent = fmtTime((Date.now() - a.start) / 1000);
+  };
+  tick();
+  timerInterval = setInterval(tick, 500);
+}
+
+function sanitizeProblemNodes(container) {
+  container.querySelectorAll("script, style, iframe, object, embed").forEach(el => el.remove());
+  // plain eager <img src> only — wiki thumbnails carry srcset, and lazy images never load off-screen
+  container.querySelectorAll("img").forEach(im => {
+    im.removeAttribute("srcset"); im.removeAttribute("sizes");
+    im.setAttribute("loading", "eager"); im.setAttribute("decoding", "async");
+  });
+  container.querySelectorAll("*").forEach(el => {
+    for (const attr of [...el.attributes]) {
+      if (/^on/i.test(attr.name) || attr.name === "srcdoc") el.removeAttribute(attr.name);
+    }
+  });
+  container.querySelectorAll("a").forEach(a => {
+    const img = a.querySelector("img");
+    if (img) { a.replaceWith(img); }
+    else {
+      const span = document.createElement("span");
+      span.textContent = a.textContent;
+      a.replaceWith(span);
+    }
+  });
+}
+
+async function fetchWikiDoc(page) {
+  const url = "https://artofproblemsolving.com/wiki/api.php?action=parse&page=" + page + "&format=json&origin=*";
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const j = await res.json();
+  if (!j.parse) throw new Error("no parse");
+  return new DOMParser().parseFromString(j.parse.text["*"], "text/html");
+}
+
+// choices show up as plain text "(A)", inside a LaTeX image's alt text, or —
+// for graph/picture problems — drawn inside diagram images (no alt / [asy] alt)
+function hasChoices(frag) {
+  let s = frag.textContent, graphical = false;
+  frag.querySelectorAll("img").forEach(i => {
+    const a = i.getAttribute("alt");
+    if (a == null || a === "" || a.includes("[asy]")) graphical = true;
+    s += " " + (a || "");
+  });
+  return /\(\s*A\s*\)/.test(s) || graphical;
+}
+
+// Known typos in the wiki's problem statements, verified against the official
+// problems. Applied to the text after extraction; keyed "year-number".
+const CORRECTIONS = {
+  "1987-20": [{ find: 'is prime." A value of', replace: 'is not prime." A value of' }],
+};
+function applyCorrections(frag, y, n) {
+  const fixes = CORRECTIONS[y + "-" + n];
+  if (!fixes) return false;
+  const walker = document.createTreeWalker(frag, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  let applied = false;
+  for (const f of fixes) {
+    const t = nodes.find(t => t.nodeValue.includes(f.find));
+    if (t) { t.nodeValue = t.nodeValue.replace(f.find, f.replace); applied = true; }
+  }
+  return applied;
+}
+
+// rough LaTeX -> plain text for the "image didn't load" fallback
+function texToText(tex) {
+  return tex
+    .replace(/^\$+|\$+$/g, "")
+    .replace(/\\(?:qquad|quad)/g, "   ")
+    .replace(/\\(?:textbf|mathrm|text|textsc|mathbf)\s*\{([^{}]*)\}/g, "$1")
+    .replace(/\^\s*(?:\{\\circ\}|\\circ)/g, "°").replace(/\\circ/g, "°").replace(/\\times/g, "×").replace(/\\cdot/g, "·").replace(/\\pi/g, "π")
+    .replace(/\\(?:d|t)?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g, "($1)/($2)")
+    .replace(/\\sqrt\s*\{([^{}]*)\}/g, "√($1)")
+    .replace(/\\(?:[,;!]|\s)/g, " ")
+    .replace(/[{}]/g, "")
+    .replace(/\s+/g, " ").trim();
+}
+
+// resolves when the image has loaded or given up; failed loads are retried with a cache-buster
+function loadImg(im, retries) {
+  return new Promise(res => {
+    const bust = () => { try { const u = new URL(im.src); u.searchParams.set("r", Date.now()); im.src = u.href; } catch { res(); } };
+    const tryLoad = left => {
+      if (im.complete && im.naturalWidth > 0) return res();
+      im.onload = () => { im.onload = im.onerror = null; res(); };
+      im.onerror = () => { im.onload = im.onerror = null; if (left > 0) { bust(); tryLoad(left - 1); } else res(); };
+      if (im.complete) bust(); // already failed before we attached listeners — kick it
+    };
+    tryLoad(retries);
+  });
+}
+
+function extractSection(doc, headingRe) {
+  const h2 = [...doc.querySelectorAll("h2")].find(h => headingRe.test(h.textContent.replace(/\[edit\]/g, "").trim()));
+  const frag = document.createElement("div");
+  if (h2) {
+    let node = h2.nextElementSibling;
+    while (node && node.tagName !== "H2") { frag.appendChild(node.cloneNode(true)); node = node.nextElementSibling; }
+  } else {
+    const root = doc.querySelector(".mw-parser-output") || doc.body;
+    for (const child of [...root.children]) {
+      if (/^H[12]$/.test(child.tagName) && /Solution/i.test(child.textContent)) break;
+      if (child.id === "toc" || child.classList.contains("toc")) continue;
+      frag.appendChild(child.cloneNode(true));
+    }
+  }
+  // drop bare "Solution" link paragraphs (present on the combined year pages)
+  [...frag.children].forEach(el => { if (/^Solutions?$/.test(el.textContent.trim())) el.remove(); });
+  return frag;
+}
+
+async function loadProblemBody(y, n, attempt = 0) {
+  const body = $("p-body");
+  body.innerHTML = `<div class="loading"><span class="spin"></span>Summoning your problem…</div>`;
+  try {
+    let frag = extractSection(await fetchWikiDoc(wikiPage(y, n)), /^Problem/);
+    if (!hasChoices(frag)) {
+      // some individual problem pages omit the answer choices — the combined year page has them
+      try {
+        const yearFrag = extractSection(await fetchWikiDoc(wikiYearPage(y)), new RegExp("^Problem " + n + "$"));
+        if (hasChoices(yearFrag)) frag = yearFrag;
+      } catch {}
+    }
+    sanitizeProblemNodes(frag);
+    if (!frag.textContent.trim() && !frag.querySelector("img")) throw new Error("empty problem");
+    if (applyCorrections(frag, y, n)) {
+      const note = document.createElement("div");
+      note.className = "paper-note";
+      note.textContent = "✎ a typo in the wiki's copy of this problem has been corrected here";
+      frag.appendChild(note);
+    }
+    // Don't reveal a half-rendered problem: the numbers, diagrams and answer choices
+    // are images. Wait for them (retrying failures), and if any still won't load,
+    // show the LaTeX source text instead so information is never silently missing.
+    const imgs = [...frag.querySelectorAll("img")];
+    await Promise.race([Promise.all(imgs.map(im => loadImg(im, 2))), new Promise(r => setTimeout(r, 20000))]);
+    let missing = 0;
+    for (const im of imgs) {
+      if (im.complete && im.naturalWidth > 0) continue;
+      missing++;
+      const alt = (im.getAttribute("alt") || "").trim();
+      const fb = document.createElement("span");
+      if (alt && !alt.startsWith("[asy]")) { fb.className = "tex-fallback"; fb.textContent = texToText(alt); }
+      else { fb.className = "img-missing"; fb.textContent = "[picture didn't load]"; }
+      im.replaceWith(fb);
+    }
+    body.innerHTML = "";
+    if (missing) {
+      const bar = document.createElement("div");
+      bar.className = "paper-banner";
+      bar.append(`⚠️ ${missing} picture${missing > 1 ? "s" : ""} didn't load — showing the math as text instead.`);
+      const rb = document.createElement("button");
+      rb.className = "btn gold";
+      rb.textContent = "Reload problem 🔄";
+      rb.addEventListener("click", () => loadProblemBody(y, n));
+      bar.appendChild(rb);
+      body.appendChild(bar);
+    }
+    while (frag.firstChild) body.appendChild(frag.firstChild);
+    problemLoaded = true;
+  } catch (err) {
+    if (attempt < 2) {
+      await new Promise(r => setTimeout(r, 2500 * (attempt + 1)));
+      return loadProblemBody(y, n, attempt + 1);
+    }
+    body.innerHTML = "";
+    const div = document.createElement("div");
+    div.className = "fetch-error";
+    div.innerHTML = `😢 Couldn't load the problem (internet hiccup).<br><br>`;
+    const retry = document.createElement("button");
+    retry.className = "btn gold";
+    retry.textContent = "Try again 🔄";
+    retry.addEventListener("click", () => loadProblemBody(y, n));
+    const cancel = document.createElement("button");
+    cancel.className = "btn ghost";
+    cancel.textContent = "Back home (doesn't count)";
+    cancel.addEventListener("click", () => {
+      setActive(currentKid, null);
+      clearInterval(timerInterval);
+      renderDash();
+      show("screen-dash");
+    });
+    div.append(retry, cancel);
+    body.appendChild(div);
+  }
+}
+
+let selectedAnswer = null;
+function renderAnswerButtons() {
+  selectedAnswer = null;
+  $("btn-lockin").disabled = true;
+  const box = $("p-answers");
+  box.innerHTML = "";
+  for (const L of LETTERS) {
+    const b = document.createElement("button");
+    b.className = "ansbtn";
+    b.textContent = L;
+    b.addEventListener("click", () => {
+      sndClick();
+      selectedAnswer = L;
+      box.querySelectorAll(".ansbtn").forEach(x => x.classList.remove("sel"));
+      b.classList.add("sel");
+      $("btn-lockin").disabled = false;
+    });
+    box.appendChild(b);
+  }
+}
+
+/* ---------- answering ---------- */
+function finishProblem(answer) {  // answer = letter or null (gave up)
+  const a = getActive(currentKid);
+  if (!a) return;
+  const { y, n, start } = a;
+  const t = Math.round(Math.max(1, (Date.now() - start) / 1000));
+  const correct = answer === answerOf(y, n);
+
+  const before = foldKid(currentKid);
+  const oldLvl = levelFromXp(before.xp).lvl;
+
+  sendEvent(currentKid, "answer", { y, n, a: answer, ok: correct, t, d: todayStr(), ts: Date.now() });
+  setActive(currentKid, null);
+  clearInterval(timerInterval);
+
+  const after = foldKid(currentKid);
+  const newLvl = levelFromXp(after.xp).lvl;
+  const rec = { y, n, ok: correct, t };
+  const xp = xpFor(rec);
+  const why = correct
+    ? "+" + (20 + 4 * n) + " for solving #" + n + (t < speedParSec(n) ? " · +" + SPEED_BONUS + " speed bonus 🚀" : "")
+    : "+" + XP_TRY + " for trying";
+
+  $("r-emoji").textContent = correct ? ["🎉", "🤩", "🦸", "🧠", "💥"][Math.floor(Math.random() * 5)] : "🙈";
+  $("r-title").textContent = correct ? "CORRECT!" : (answer ? "Not this time…" : "Revealed!");
+  $("r-title").className = correct ? "good" : "bad";
+  $("r-detail").innerHTML =
+    (answer ? `You picked <b>${answer}</b> · ` : "") +
+    `answer: <b>${answerOf(y, n)}</b> · time: <b>${fmtTime(t)}</b><br>${contestName(y)} · Problem ${n}`;
+  $("r-xp").textContent = "+" + xp + " XP";
+  $("r-xpwhy").textContent = why;
+  $("r-solution").href = wikiUrl(y, n);
+  openModal("ov-result");
+  if (correct) { sndCorrect(); confetti(90); } else { sndWrong(); }
+
+  pendingLevelUp = newLvl > oldLvl ? { oldLvl, newLvl } : null;
+  pendingBadges = BADGES.filter(b => after.badges[b.id] && !before.badges[b.id]);
+  syncNow(); // pull any cross-device updates while they read the result
+}
+
+$("r-home").addEventListener("click", () => {
+  closeModal("ov-result");
+  const p = foldKid(currentKid);
+  if (pendingLevelUp) {
+    const { oldLvl, newLvl } = pendingLevelUp;
+    pendingLevelUp = null;
+    $("l-level").textContent = newLvl;
+    $("l-title").textContent = LEVEL_TITLES[Math.min(newLvl - 1, LEVEL_TITLES.length - 1)];
+    $("l-pet").innerHTML = petArt(p, 96);
+    const evolved = p.pet && petStage(newLvl) > petStage(oldLvl);
+    $("l-evolve").textContent = evolved
+      ? "WHOA — your " + PETS[p.pet].label.toLowerCase() + " evolved to " + STAGE_NAMES[petStage(newLvl)] + "!"
+      : "";
+    openModal("ov-levelup");
+    sndLevel(); confetti(60);
+  } else {
+    afterResultFlow();
+  }
+});
+$("l-ok").addEventListener("click", () => { closeModal("ov-levelup"); afterResultFlow(); });
+
+function afterResultFlow() {
+  for (const b of pendingBadges) toast(b.e, "Trophy earned: " + b.n + "!");
+  if (pendingBadges.length) sndBadge();
+  pendingBadges = [];
+  renderDash();
+  show("screen-dash");
+}
+
+/* ---------- parent gate + settings ---------- */
+async function sha256Hex(s) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+$("btn-settings").addEventListener("click", () => {
+  if (!PARENT_HASH) { // no password configured — open settings directly
+    $("set-daily").value = foldSettings().daily;
+    openModal("ov-settings");
+    return;
+  }
+  $("pw-input").value = "";
+  $("pw-err").textContent = "";
+  openModal("ov-password");
+  setTimeout(() => $("pw-input").focus(), 100);
+});
+$("pw-cancel").addEventListener("click", () => closeModal("ov-password"));
+async function tryUnlock() {
+  const val = $("pw-input").value;
+  const hash = await sha256Hex(val);
+  if (hash === PARENT_HASH) {
+    closeModal("ov-password");
+    $("set-daily").value = foldSettings().daily;
+    openModal("ov-settings");
+  } else {
+    $("pw-err").textContent = "Nope — that's not it! 🙅";
+    $("pw-input").value = "";
+    const m = $("pw-modal");
+    m.classList.remove("shake"); void m.offsetWidth; m.classList.add("shake");
+  }
+}
+$("pw-ok").addEventListener("click", tryUnlock);
+$("pw-input").addEventListener("keydown", e => { if (e.key === "Enter") tryUnlock(); });
+
+$("set-ok").addEventListener("click", () => {
+  const v = parseInt($("set-daily").value, 10);
+  if (Number.isInteger(v) && v >= 1 && v <= 20 && v !== foldSettings().daily) {
+    sendEvent("*", "daily", { daily: v, d: todayStr() });
+  }
+  closeModal("ov-settings");
+  renderSelect();
+});
+(function buildUncount() {
+  const sel = $("un-kid");
+  for (const id of Object.keys(KIDS).sort((a, b) => KIDS[a].name.localeCompare(KIDS[b].name))) {
+    const o = document.createElement("option");
+    o.value = id; o.textContent = KIDS[id].name;
+    sel.appendChild(o);
+  }
+  $("un-go").addEventListener("click", () => {
+    const kid = sel.value, y = parseInt($("un-year").value, 10), n = parseInt($("un-num").value, 10);
+    const msg = $("un-msg");
+    msg.className = "pw-err";
+    if (!ANSWERS[y] || !(n >= 1 && n <= 25)) { msg.textContent = "Enter a contest year (1985–2026, no 2021) and a problem number 1–25."; return; }
+    const hits = foldKid(kid).records.filter(r => r.y === y && r.n === n).length;
+    if (!hits && !confirm(`No attempts by ${KIDS[kid].name} at ${contestName(y)} #${n} have synced yet. Un-count anyway? (Also covers attempts still syncing from another device.)`)) return;
+    sendEvent(kid, "void", { y, n, ts: Date.now(), d: todayStr() });
+    msg.className = "pw-err good";
+    msg.textContent = `✅ ${contestName(y)} #${n} un-counted for ${KIDS[kid].name} — it can be served again.`;
+    renderSelect();
+  });
+})();
+
+(function buildResetButtons() {
+  const box = $("reset-btns");
+  for (const id of Object.keys(KIDS).sort((a, b) => KIDS[a].name.localeCompare(KIDS[b].name))) {
+    const btn = document.createElement("button");
+    btn.className = "btn coral";
+    btn.textContent = "Reset " + KIDS[id].name;
+    btn.addEventListener("click", () => {
+      if (confirm("Really erase ALL of " + KIDS[id].name + "'s progress on every device? This cannot be undone.")) {
+        sendEvent(id, "reset", { d: todayStr() });
+        setActive(id, null);
+        renderSelect();
+        closeModal("ov-settings");
+      }
+    });
+    box.appendChild(btn);
+  }
+})();
+
+/* ==================== SCRATCHPAD ==================== */
+// Full-page drawing overlay for the problem screen. Every stroke is drawn with a
+// contrasting halo so it reads on the white card, the navy background, and the
+// colored buttons alike. One finger/pen draws, two fingers scroll, palms are
+// ignored while a stylus is in use. Drawings stay visible after leaving scratch
+// mode (so they can see their work while answering) and reset per problem.
+const scratch = (() => {
+  const cC = $("scratch-canvas"), cL = $("scratch-live");
+  const ctxC = cC.getContext("2d"), ctxL = cL.getContext("2d");
+  const COLORS = [
+    { c: "#ff3b30", h: "#ffffff" }, // red-orange — default, pops on white / navy / mint
+    { c: "#2979ff", h: "#ffffff" },
+    { c: "#111111", h: "#ffffff" },
+    { c: "#ffffff", h: "#111111" },
+    { c: "#ffd21f", h: "#111111" },
+  ];
+  let active = false, visible = false, tool = "pen", color = COLORS[0];
+  let strokes = [], cur = null, dpr = 1;
+  const pointers = new Map();
+  let lastPenTime = 0;
+
+  let sizePending = false;
+  function size() {
+    if (pointers.size) { sizePending = true; return; } // never resize mid-gesture (iOS address-bar collapse fires resizes while scrolling)
+    sizePending = false;
+    const w = document.documentElement.clientWidth;
+    const h = document.documentElement.scrollHeight;
+    const d = Math.min(window.devicePixelRatio || 1, 2); // line art: 2x is plenty, and halves GPU memory on phones
+    if (w === cC.clientWidth && h === cC.clientHeight && d === dpr) return; // unchanged: don't wipe + redraw
+    dpr = d;
+    for (const c of [cC, cL]) {
+      c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
+      c.style.width = w + "px"; c.style.height = h + "px";
+    }
+    redraw();
+  }
+  function path(ctx, s, w) {
+    const p = s.pts;
+    ctx.lineWidth = w * dpr;
+    ctx.beginPath();
+    if (p.length === 1) {
+      ctx.arc(p[0].x * dpr, p[0].y * dpr, w * dpr / 2, 0, Math.PI * 2);
+      ctx.fillStyle = ctx.strokeStyle; ctx.fill();
+      return;
+    }
+    ctx.moveTo(p[0].x * dpr, p[0].y * dpr);
+    for (let i = 1; i < p.length; i++) ctx.lineTo(p[i].x * dpr, p[i].y * dpr);
+    ctx.stroke();
+  }
+  function drawStroke(ctx, s) {
+    if (!s.pts.length) return;
+    ctx.save();
+    ctx.lineCap = "round"; ctx.lineJoin = "round";
+    if (s.tool === "erase") {
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.strokeStyle = "#000";
+      path(ctx, s, s.w * 4);
+    } else {
+      ctx.strokeStyle = s.halo; path(ctx, s, s.w + 3);
+      ctx.strokeStyle = s.color; path(ctx, s, s.w);
+    }
+    ctx.restore();
+  }
+  function redraw() {
+    ctxC.clearRect(0, 0, cC.width, cC.height);
+    for (const s of strokes) drawStroke(ctxC, s);
+  }
+  // page coords (pageX/Y stay correct while pinch-zoomed; synthetic test events lack them)
+  const pt = e => (e.isTrusted ? { x: e.pageX, y: e.pageY } : { x: e.clientX + window.scrollX, y: e.clientY + window.scrollY });
+
+  function down(e) {
+    if (e.pointerType === "pen") lastPenTime = Date.now();
+    else if (e.pointerType === "touch" && Date.now() - lastPenTime < 800) return; // palm
+    const touchesBefore = [...pointers.values()].filter(p => p.type === "touch").length;
+    pointers.set(e.pointerId, { type: e.pointerType });
+    if (e.pointerType === "touch" && touchesBefore >= 1) { // second finger: this is a scroll, not a stroke
+      if (cur) { cur = null; ctxL.clearRect(0, 0, cL.width, cL.height); }
+      return;
+    }
+    try { cL.setPointerCapture(e.pointerId); } catch {}
+    const base = tool === "erase" ? 6 : 4;
+    const w = e.pointerType === "pen" && e.pressure > 0 ? base * (0.5 + e.pressure) : base;
+    cur = { id: e.pointerId, tool, color: color.c, halo: color.h, w, pts: [pt(e)] };
+    if (tool === "erase") drawStroke(ctxC, cur); else drawStroke(ctxL, cur);
+  }
+  function move(e) {
+    if (!cur || e.pointerId !== cur.id) return;
+    if ([...pointers.values()].filter(p => p.type === "touch").length >= 2) return; // browser is scrolling
+    let evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
+    if (!evs.length) evs = [e];
+    for (const ce of evs) cur.pts.push(pt(ce));
+    if (cur.tool === "erase") {
+      const tail = { ...cur, pts: cur.pts.slice(-Math.min(cur.pts.length, evs.length + 1)) };
+      drawStroke(ctxC, tail);
+    } else {
+      ctxL.clearRect(0, 0, cL.width, cL.height);
+      drawStroke(ctxL, cur);
+    }
+  }
+  function up(e) {
+    pointers.delete(e.pointerId);
+    if (!pointers.size && sizePending) setTimeout(size, 50);
+    if (!cur || e.pointerId !== cur.id) return;
+    strokes.push(cur);
+    if (cur.tool !== "erase") { drawStroke(ctxC, cur); ctxL.clearRect(0, 0, cL.width, cL.height); }
+    cur = null;
+  }
+  cL.addEventListener("pointerdown", down);
+  cL.addEventListener("pointermove", move);
+  cL.addEventListener("pointerup", up);
+  cL.addEventListener("pointercancel", up);
+  cL.addEventListener("contextmenu", e => e.preventDefault());
+  // touch-action allows native pan + pinch-zoom, so two fingers scroll/zoom natively; a lone
+  // finger is claimed for drawing by cancelling its default (must be non-passive)
+  const claimSingleTouch = e => { if (e.touches.length === 1) e.preventDefault(); };
+  cL.addEventListener("touchstart", claimSingleTouch, { passive: false });
+  cL.addEventListener("touchmove", claimSingleTouch, { passive: false });
+
+  // toolbar
+  const swatches = $("scratch-colors");
+  COLORS.forEach((col, i) => {
+    const b = document.createElement("button");
+    b.className = "swatch" + (i === 0 ? " sel" : "");
+    b.style.background = col.c;
+    b.title = "Pen color";
+    b.addEventListener("click", () => {
+      color = col; tool = "pen";
+      swatches.querySelectorAll(".swatch").forEach(s => s.classList.remove("sel"));
+      b.classList.add("sel");
+      $("sc-eraser").classList.remove("sel");
+    });
+    swatches.appendChild(b);
+  });
+  $("sc-eraser").addEventListener("click", () => {
+    tool = tool === "erase" ? "pen" : "erase";
+    $("sc-eraser").classList.toggle("sel", tool === "erase");
+  });
+  $("sc-undo").addEventListener("click", () => { strokes.pop(); redraw(); });
+  $("sc-clear").addEventListener("click", () => { strokes = []; redraw(); });
+  $("sc-done").addEventListener("click", () => setActive(false));
+  $("scratch-toggle").addEventListener("click", () => { sndClick(); setActive(true); });
+
+  function setActive(on) {
+    active = on;
+    cL.classList.toggle("on", on);
+    document.body.classList.toggle("scratching", on);
+    $("scratch-bar").hidden = !on;
+    $("scratch-toggle").hidden = on || !visible;
+    if (on) {
+      size();
+      if (!store.get("amc8q.scratchHint", false)) { toast("✏️", "1 finger draws · 2 fingers scroll or zoom"); store.set("amc8q.scratchHint", true); }
+    } else { pointers.clear(); cur = null; ctxL.clearRect(0, 0, cL.width, cL.height); }
+  }
+  function setVisible(v) {
+    visible = v;
+    cC.hidden = cL.hidden = !v;
+    if (!v) setActive(false);
+    $("scratch-toggle").hidden = !v;
+    if (v) size();
+  }
+  function reset() { strokes = []; cur = null; tool = "pen"; $("sc-eraser").classList.remove("sel"); redraw(); ctxL.clearRect(0, 0, cL.width, cL.height); }
+
+  window.addEventListener("resize", () => { if (visible) size(); });
+  if (window.ResizeObserver) new ResizeObserver(() => { if (visible) size(); }).observe(document.body);
+  return { setVisible, reset };
+})();
+
+/* ---------- wire up ---------- */
+$("btn-start").addEventListener("click", () => { if (pickedNum) { sndClick(); startProblem(false); } });
+$("btn-resume").addEventListener("click", () => { sndClick(); startProblem(true); });
+$("btn-switch").addEventListener("click", () => { sndClick(); currentKid = null; renderSelect(); show("screen-select"); });
+$("btn-lockin").addEventListener("click", () => { if (selectedAnswer && problemLoaded) finishProblem(selectedAnswer); });
+$("btn-giveup").addEventListener("click", () => { if (problemLoaded) openModal("ov-giveup"); });
+$("g-cancel").addEventListener("click", () => closeModal("ov-giveup"));
+$("g-yes").addEventListener("click", () => { closeModal("ov-giveup"); finishProblem(null); });
+
+$("soundbtn").addEventListener("click", () => {
+  prefs.sound = !prefs.sound;
+  savePrefs();
+  $("soundbtn").textContent = prefs.sound ? "🔊" : "🔇";
+  if (prefs.sound) sndClick();
+});
+$("soundbtn").textContent = prefs.sound ? "🔊" : "🔇";
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    syncNow().then(() => {
+      if ($("screen-dash").classList.contains("active")) renderDash();
+      else if ($("screen-select").classList.contains("active")) renderSelect();
+    });
+  }
+});
+
+/* ---------- boot ---------- */
+renderSelect();          // instant, from cache
+show("screen-select");
+syncNow().then(() => {
+  if ($("screen-select").classList.contains("active")) renderSelect();
+});
+</script>
+</body>
+</html>
