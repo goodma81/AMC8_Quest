@@ -13,8 +13,9 @@ window.QUEST_CONFIG = {
      `color` is their card color (pick something readable on a
      dark navy background). */
   players: {
-    player1: { name: "Player 1", color: "#53c8ff" },
-    player2: { name: "Player 2", color: "#ff9ce0" },
+    player1: { name: "Elise", color: "#3ddc97" },
+    player2: { name: "Sofia", color: "#b28bff" },
+    player3: { name: "Dad", color: "#c0c0c0" },
     // more color ideas: "#ffb84d" (orange), "#3ddc97" (mint), "#b28bff" (violet)
   },
 
